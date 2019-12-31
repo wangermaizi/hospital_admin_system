@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>角色添加页面</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+		<link rel="stylesheet" href="/static/css/weadmin.css">
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form" action="/admin/users/authList/addAuth" method="POST">
+            <div class="layui-form-item">
+                <label for="id" class="layui-form-label">
+                    <span class="we-red"></span>权限ID
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="id" name="id" 
+                    autocomplete="on" value="" placeholder='非特殊要求，默认不填写' class="layui-input">
+                </div>
+            </div>
+          <div class="layui-form-item">
+              <label for="authname" class="layui-form-label">
+                  <span class="we-red">*</span>权限名称
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" id="authname" name="authname" 
+                  autocomplete="on" value="" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="authurl"  class="layui-form-label">
+                  <span class="we-red">*</span>权限路径
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" value="" id="authurl" name="authurl" 
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  添加
+              </button>
+          </div>
+      </form>
+    </div>
+		<script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript">
+    	layui.extend({
+				admin: '{/}/static/js/admin'
+            });
+        //引入上传模块
+        //引入
+	    layui.use(['transfer','form','layer','admin','upload','jquery'], function(){
+	        var form = layui.form,
+	      	admin = layui.admin,
+	      	layer = layui.layer;
+            var upload = layui.upload;
+            var $ = layui.jquery;
+          //监听提交
+          form.on('submit(add)', function(data){
+            let sendData = {
+                id:data.field.id,
+                authname:data.field.authname,
+                authurl:data.field.authurl,
+            }
+           $.ajax({
+               url:"/admin/users/authList/addAuth",
+               method:"post",
+               contentType: "application/json; charset=utf-8",
+               data: JSON.stringify(sendData),
+           }).then(function(res){
+                layer.alert("增加成功", {icon: 6},function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                    //将ifame的上一层进行刷新页面
+                    window.parent.location.reload()
+                });
+           })
+            return false;
+          });
+        var transfer = layui.transfer;
+    })
+    </script>
+</html>

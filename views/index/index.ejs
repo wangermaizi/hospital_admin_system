@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="/css/index/shouye.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/index/font-face.css"/>
+		
+		
+	</head>
+	
+	
+	
+	<body>	
+		<div id="shouYe">
+			<div id="header">
+				<i class="headerIcon iconfont">&#xe605;</i>
+				<div class="search">
+					<input type="text" name="searchInput" id="searchInput" value="" placeholder="   搜索文章或者医生"/>
+					<i class="iconfont">&#xe613;</i>
+				</div>
+			</div>
+
+			<div id="content">	
+				<div class="lunbo">
+					<div class="imgList">
+						<!--可以用ejs循环渲染-->
+						<div class="imgItem imgActive" style="background: indianred;">212323213</div>
+						<div class="imgItem" style="background: greenyellow;">rqrwrwrwerw</div>
+						<div class="imgItem" style="background: skyblue;">213131234325345</div>
+						<div class="imgItem" style="background: oldlace;">69njymuju</div>
+						<div class="imgItem" style="background: gray;">313131313rrw</div>
+					</div>
+					<ul>
+						<li class="imgActive" id="d0"></li>
+						<li id="d1"></li>
+						<li id="d2"></li>
+						<li id="d3"></li>
+						<li id="d4"></li>
+					</ul>
+				</div>
+				
+				<div class="toutiao">
+					<div class="toutiaoBox">
+						<!--可以用ejs循环渲染-->
+						<a href="#">头条：珠海今日港珠澳大桥通车，农民工兄弟有福了</a>
+						<a href="#">头条：70万香港市民联署反黑暴：让台湾地区和英美看看</a>
+						<a href="#">头条：香港建制派要求公务员宣誓效忠特区政府 议案通过</a>
+					</div>
+				</div>
+				
+				<div class="sort">
+					<div class="sortHeader">门诊科室</div>
+					<div class="sortMap">	
+						<!--分类模块同样是可以循环渲染的-->
+						<a href="" class="iconfont">&#xe60d;<p>外科</p></a>
+						<a href="" class="iconfont">&#xe66c;<p>内科</p></a>
+						<a href="" class="iconfont">&#xe60e;<p>五官科</p></a>
+						<a href="" class="iconfont">&#xe78c;<p>骨科</p></a>
+						<a href="" class="iconfont">&#xe6ec;<p>泌尿科</p></a>
+						<a href="" class="iconfont">&#xe632;<p>妇科</p></a>
+						<a href="" class="iconfont">&#xe637;<p>儿科</p></a>
+						<a href="" class="iconfont">&#xe61f;<p>神经内科</p></a>
+					</div>
+				</div>
+					
+				<div class="doctor">
+					<div class="doctorHeader">主治医生<a href="ysxq.html" class="iconfont">更多&#xe6a2;</a></div>
+					<div class="doctorMap">	
+						<!--分类模块同样是可以循环渲染的-->
+					</div>
+				</div>
+			</div>
+			
+			<div class="abc"></div>
+			
+			<div id="footer">
+				<a href="/index/home"><div class="btn active iconfont">&#xe600;<p>首页</p></div></a>
+				<a href="#"><div class="btn iconfont">&#xe614;<p>挂号</p></div></a>
+				<a href="/index/news"><div class="btn iconfont">&#xe6af;<p>新闻</p></div></a>
+				<a href="#"><div class="btn iconfont">&#xe601;<p>我的</p></div></a>
+			</div>
+		</div>	
+		
+		
+		<script src="/js/index/lunbo以及通知.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/js/index/REM布局使用.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var doctorMap = document.querySelector(".doctorMap")
+			for(let i = 0;i<15;i++){
+				var doctorItem = document.createElement("div")
+				doctorItem.className = "doctorItem"
+				doctorItem.innerHTML = `
+						<div class="leftItem">
+							<img src="https://c-ssl.duitang.com/uploads/item/201709/06/20170906180625_YNysd.thumb.700_0.jpeg"/>
+						</div>
+						<div class="rightItem">
+							<p class="author">主治医生：陈鹏</p>
+							<p class="age">年龄：58</p>
+							<p class="gender">性别：男</p>
+							<p class="cataory">主治门科：儿科，内科</p>
+						</div>
+				`
+				doctorMap.appendChild(doctorItem)
+			}
+
+		</script>
+		
+	</body>
+</html>

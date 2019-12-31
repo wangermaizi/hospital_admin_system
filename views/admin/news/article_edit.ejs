@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+    <!--[if lt IE 9]>
+    <![endif]-->
+    <style>
+        .w-e-menu{
+            z-index: 2 !important;
+        }
+        .w-e-text-container{
+            z-index: 1 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weadmin-body">
+        <form class="layui-form" method="post" action="/admin/news/addnews" enctype="multipart/form-data">
+            <div class="layui-form-item">
+                <label for="role" class="layui-form-label">
+                    <span class="we-red">*</span>文章分类
+                </label>
+                <div class="layui-input-block" style="z-index: 100">
+                    <select name="catagory" required="" lay-verify="">
+                        <option value="<%- newsInfo.id%>"><%- newsInfo.catagory%></option>
+                        <% cataInfo.forEach((item,index)=>{%>
+                            <option value="<%= item.id%>"><%= item.catagory%></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="we-red"></span>
+                </div>
+            </div>
+            <input type="text" value="" name="headImg" id="headImg" hidden>
+            <div class="layui-form-item">
+                <label for="title" class="layui-form-label">
+                    <span class="we-red">*</span>文章标题
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="title" name="title" required="" lay-verify="title"
+                           autocomplete="off" value="<%=newsInfo.title %>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red tip">*</span>报错提醒
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="content" class="layui-form-label">
+                    <span class="we-red">*</span>文章内容
+                </label>
+                <div class="layui-input-block" id="text1">
+
+                </div>
+                <textarea hidden id="content" name="content" cols="30" rows="10">
+                    <%= newsInfo.content%>
+                </textarea>
+            </div>
+            <div class="layui-form-item">
+                <label for="submit" class="layui-form-label">
+                </label>
+                <button type="submit" lay-submit="" id="submit"  class="layui-btn">
+                    发布文章
+                </button>
+            </div>
+        </form>
+    </div>
+    <script src="/js/login/jquery.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/js/common/wangEditor.min.js"></script>
+    <script type="text/javascript">
+        layui.extend({
+            admin: '{/}/static/js/admin'
+        });
+        layui.use(['form','layer','admin','upload','jquery'], function() {
+            var form = layui.form,
+                admin = layui.admin,
+                $ = layui.jquery,
+                layer = layui.layer;
+            //upload = layui.upload;
+            //自定义验证规则
+            form.verify({
+                title: function (value) {
+                    if (value.length < 5) {
+                        return '标题至少得5个字符啊';
+                    }else if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                        return "标题不能含有特殊字符"
+                    }
+                }
+
+            });
+        });
+    </script>
+    <script>
+        /*富文本编辑器的操作*/
+        var E = window.wangEditor
+        var editor2 = new E('#text1')
+        editor2.customConfig.onchange = function (html) {
+            // 监控变化，同步更新到 textarea
+            $('#content').val(html)
+            let hasImg = $('#content img').attr('src')
+            console.log(hasImg);
+            $('#headImg').val(hasImg)
+        }
+        editor2.customConfig.uploadImgServer = '/admin/news/upLoad'
+        editor2.customConfig.uploadFileName = 'newsPicture'
+        editor2.customConfig.uploadImgMaxLength = 5
+        editor2.create()
+        let str = `<%- newsInfo.content%>`;
+        $("#text1").val(editor2.txt.html(str))
+        //获取内容
+    </script>
+</body>
+</html>

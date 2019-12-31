@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+    <!--[if lt IE 9]>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="weadmin-body">
+        <form class="layui-form" method="post" action="/admin/drugs/adddrugs">
+            <div class="layui-form-item">
+                <label for="role" class="layui-form-label">
+                    <span class="we-red">*</span>药品分类
+                </label>
+                <div class="layui-input-block">
+                    <select name="catagory" required lay-verify="drugs_c">
+                        <option value="<%if (drugInfo != null){%><%- drugInfo.ID%><%}%>"><%if(drugInfo ==null){%>请选择药品类型<%}else{%><%- drugInfo.catagory%><%}%></option>
+                        <% cataInfo.forEach((item,index)=>{%>
+                            <option value="<%= item.ID%>"><%= item.catagory%></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="we-red"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="drugname" class="layui-form-label">
+                    <span class="we-red">*</span>药品名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="drugname" name="drugname"  lay-verify="drugs"
+                           autocomplete="off" value="<%if (drugInfo != null){%><%- drugInfo.drugname%><%}%>" class="layui-input" lay-verType="alert">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red tip">*</span>药品名称不能有特殊字符
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="company" class="layui-form-label">
+                    <span class="we-red">*</span>生产公司
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="company" name="company"  lay-verify="company"
+                           autocomplete="off" value="<%if (drugInfo != null){%><%- drugInfo.company%><%}%>" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="brief" class="layui-form-label">
+                    <span class="we-red">*</span>药品简介
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="brief" name="brief"  lay-verify="brief"
+                           autocomplete="off" value="<%if (drugInfo != null){%><%- drugInfo.brief%><%}else{%><%}%>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red tip">*</span>简单描述药品的功能,格式为:"适应症:"...
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="price" class="layui-form-label">
+                    <span class="we-red">*</span>药品价格
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="price" name="price"  lay-verify="price"
+                           autocomplete="off" value="<%if (drugInfo != null){%><%- drugInfo.price%><%}%>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red tip">*</span>价格默认是元
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="items" class="layui-form-label">
+                    <span class="we-red">*</span>入库数量
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="items" name="items"  lay-verify="items"
+                           autocomplete="off" value="<%if (drugInfo != null){%><%- drugInfo.items%><%}%>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red tip">*</span>单位默认是盒
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="entry" class="layui-form-label">
+                    <span class="we-red">*</span>入库时间
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" value="" id="entry" name="entry" required=""
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="submit" class="layui-form-label">
+                </label>
+                <button type="submit" lay-submit="" id="submit"  class="layui-btn">
+                    添加药品
+                </button>
+            </div>
+        </form>
+    </div>
+    <script src="/js/login/jquery.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        layui.extend({
+            admin: '{/}/static/js/admin'
+        });
+        layui.use(['form','layer','admin','upload','jquery','laydate'], function() {
+            var form = layui.form,
+                admin = layui.admin,
+                $ = layui.jquery,
+                layer = layui.layer;
+                laydate = layui.laydate;
+            //自定义验证规则
+            console.log(form)
+            form.verify({
+                author:function (value, item) {
+                    console.log('value:',value)
+                    if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                        return '修改者不能有特殊字符';
+                    }else if(/^\d+\d+\d$/.test(value)){
+                        return '用户名不能全为数字';
+                    }
+                },
+                drugs:function (value, item) {
+                    if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                        return '药品名不能有特殊字符';
+                    }
+                },
+                drugs_c(value, item){
+                    if (value == '') {
+                        return '药品分类不能有为空';
+                    }
+                }
+            });
+            laydate.render({
+                elem:'#entry',
+                <%if (drugInfo != null){%>value:'<%- drugInfo.entrytime.trim()%>',<%}%>
+                <%if(drugInfo != null){%>isInitValue: true,<%}%>
+                trigger: 'click'
+                /*由于layUI的时间插件存在bug(页面高度不够),需要将呼出控件的方式由原来的focus(聚焦)变为click(点击)*/
+            })
+        });
+    </script>
+</body>
+</html>

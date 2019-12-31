@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>注册表单</title>
+  <link rel="stylesheet" href="/css/login/style.css" />
+  <body>
+  
+    <div class="login-container">
+      <h1>登入页面</h1>
+      
+      <div class="connect">
+        <p>请登入</p>
+      </div>
+      
+      <form action="/rl/login" method="POST" id="loginForm" enctype="application/x-www-form-urlencoded">
+        <div>
+          <input type="text" name="username" class="username" placeholder="用户名或邮箱" autocomplete="on"/>
+        </div>
+        <div>
+          <input type="password" name="password" class="password" placeholder="密码" oncontextmenu="return false" onpaste="return false" />
+        </div>
+        <button id="submit" type="submit">登 陆</button>
+      </form>
+    
+      <a href="register">
+        <button type="button" class="register-tis">还有没有账号？</button>
+      </a>
+    
+    </div>
+  
+  
+  <script src="/js/login/jquery.min.js"></script>
+  <script src="/js/login/common.js"></script>
+  <!--背景图片自动更换-->
+  <script src="/js/login/supersized.3.2.7.min.js"></script>
+  <script src="/js/login/supersized-init.js"></script>
+  <!--表单验证-->
+  <script src="/js/login/jquery.validate.min.js?var1.14.0"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+</head>
+<body>
+    <div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+        <a href="/admin">首页</a>
+        <a href="/admin/drugs">药品管理</a>
+        <a>
+          <cite>药品药物管理</cite></a>
+      </span>
+        <a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="weadmin-body">
+        <div class="layui-row">
+            <form class="layui-form layui-col-md12 we-search" method="get" action="/admin/drugs/manage">
+                <div class="layui-inline">
+                    <select id="catagory" name="cid" lay-filter="catagory">
+                        <%if(cid != undefined){%>
+                        <option value="<%- cid%>">已选择分类</option>
+                        <%}else{%>
+                        <option value="">请选择分类</option>
+                        <%}%>
+                        <% cataInfo.forEach((item,index)=>{%>
+                            <option value="<%- item.ID%>"><%- item.catagory%></option>
+                        <%})%>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <input type="text" name="search" placeholder="请输入药品名或者公司名" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" type="submit"><i class="layui-icon">&#xe615;</i></button>
+            </form>
+        </div>
+        <div class="weadmin-block">
+            <button class="layui-btn layui-btn-danger" onclick="xxDelAll()"><i class="layui-icon"></i>批量删除</button>
+            <button class="layui-btn" onclick="WeAdminShow('添加药品','/admin/drugs/adddrugs')"><i class="layui-icon"></i>添加</button>
+            <button class="layui-btn" onclick="location.href='/admin/drugs/manage' "><i class="layui-icon"></i>清除查询</button>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="skipto" name="price_min" placeholder="跳转至" autocomplete="off" class="layui-input">
+            </div>
+            <label for="skipto">
+                <button class="layui-btn" type="submit"><i class="layui-icon">&#xe615;</i></button>
+            </label>
+            <span class="fr" style="line-height:40px">共有数据：<%- allnum%> 条</span>
+            <span class="fr" style="line-height:40px">&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</span>
+            <span class="fr" style="line-height:40px">共有页数：<%- allPage%> 页</span>
+        </div>
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th>
+                    <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                </th>
+                <th>ID</th>
+                <th>药品名</th>
+                <th>分类</th>
+                <th>公司</th>
+                <th>适应症</th>
+                <th>价格</th>
+                <th>库存</th>
+                <th>操作人</th>
+                <th>入库时间</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+            <% drugsInfo.forEach(function (item, index) { %>
+                <tr>
+                    <td>
+                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='<%= item.ID%>'><i class="layui-icon">&#xe605;</i></div>
+                    </td>
+                    <td><%= item.ID%></td>
+                    <td><%= item.drugname%></td>
+                    <td><%= item.catagory%></td>
+                    <td><%= item.company%></td>
+                    <td><%= item.brief%></td>
+                    <td><%= item.price%></td>
+                    <td><%= item.items%></td>
+                    <td><%= item.author%></td>
+                    <td><%-parseTime(item.entrytime)%></td>
+                    <td class="td-manage">
+                        <a title="编辑" onclick="WeAdminShow('编辑','/admin/drugs/adddrugs?ID=<%= item.ID%>')">
+                            <i class="layui-icon">&#xe642;</i>
+                        </a>
+                        <a title="删除" onclick="xxMember_del(this,'<%= item.ID%>')" href="javascript:void (0);">
+                            <i class="layui-icon">&#xe640;</i>
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+        <div class="page">
+            <div>
+                <%if (page > 1) {%>
+                    <a class="prev" href="/admin/drugs/manage?page=<%- page-1%>&search=<%- searchItem%>&cid=<%- cid%>"> << </a>
+                <% } %>
+                <% for (let i = page-2; i < page+3; i++) {%>
+                    <% if (i == page) {%>
+                        <span class="current"><%- page%></span>
+                    <% } else { %>
+                        <% if (i > 0 && i <= allPage) {%>
+                            <a class="num" href="/admin/drugs/manage?page=<%- i%>&search=<%- searchItem%>&cid=<%- cid%>"><%- i %></a>
+                        <% } %>
+                    <% } %>
+                <% }%>
+                <a class="next" href="<% if (page < allPage) {%> /admin/drugs/manage?page=<%- parseInt(page)+1%> &search=<%- searchItem %> &cid=<%- cid%><% } else{ %> javascript:void (0) <%}%>"> >> </a>
+            </div>
+        </div>
+    </div>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/eleDel.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        /*开始删除字段*/
+        layui.use(['form','jquery','admin'],function () {
+            var $ = layui.jquery;
+            var form = layui.form;
+            form.on("select(catagory)",function (data) {
+                console.log(data.value);
+                let cid = data.value;
+                location.href = "/admin/drugs/manage?cid="+cid;
+            })
+            window.xxDelAll = function (argument) {
+                var data = tableCheck.getData();
+                layer.confirm('确认要删除吗？' + data, function(index) {
+                    //捉到所有被选中的，发异步进行删除
+                    console.log(data);
+                    $.ajax({
+                        method:'GET',
+                        url:'/admin/drugs/manage/deldrugs',
+                        data:{data}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                });
+            }
+            /*用户-删除*/
+            window.xxMember_del = function (obj, id) {
+                layer.confirm('确认要删除吗？', function(index) {
+                    console.log(id);
+                    $.ajax({
+                        method: "GET",
+                        url:"/admin/drugs/manage/deldrugs",
+                        data:{data:id}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                    //发异步删除数据
+                    $(obj).parents("tr").remove();
+                });
+            }
+            $('input[type=checkbox]').change(function (e) {
+                console.log(e);
+                console.log(e.target.dataset.id);
+                console.log($(this).prop('checked'))
+                let newsID = e.target.dataset.id;
+                let isPub = $(this).prop('checked');
+                $.ajax({
+                    url:'/admin/drugs/ispub',
+                    method:'POST',
+                    data:{newsID,isPub}
+                }).then((res)=>{
+                    console.log(res);
+                    location.reload()
+                })
+            })
+            $('#skipto').blur(function () {
+                let page = $(this).val();
+                let search = location.href;
+                console.log(search);
+                if (search.indexOf("search") == -1) {
+                    location.href = "/admin/drugs/manage?page="+page
+                } else if (search.indexOf("page") == -1) {
+                    let newUrl = search+"&page="+page
+                    location.href = newUrl
+                } else {
+                    let query = location.search;
+                    let originalUrl =  query.split('&')[0]
+                    let newUrl = search.replace(originalUrl,'?page='+page)
+                    location.href = newUrl
+                }
+            }).end().parent().next().find('button').click(function () {
+                let page = $("#skipto").val()
+                console.log("/admin/news/manage?page=" + page + "&search=" + "<%- searchItem %>");
+                location.href = "/admin/news/manage?page="+page+"&search="+"<%- searchItem%>"
+                /*跳转页面暂时没有做出来*/
+                /*跳转页面是通过原生js解析网址做了出来*/
+            });
+
+        })
+
+    </script>
+</body>
+</html>

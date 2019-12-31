@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>角色添加页面</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+		<link rel="stylesheet" href="/static/css/weadmin.css">
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form" action="/admin/users/roleList/addRole" method="POST">
+          <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="we-red">*</span>角色名称
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" id="rolename" name="rolename" 
+                  autocomplete="on" value="" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="phone"  class="layui-form-label">
+                  <span class="we-red">*</span>角色描述
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" value="" id="brief" name="brief" 
+                  autocomplete="off" lay-verify="required" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                <span class="we-red">*</span>角色的权限
+            </label>
+            <div class="layui-input-block">
+                <div id="test"></div>
+            </div>
+        </div>
+
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  添加
+              </button>
+          </div>
+      </form>
+    </div>
+		<script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript">
+    	layui.extend({
+				admin: '{/}/static/js/admin'
+            });
+        //引入上传模块
+        //引入
+	    layui.use(['transfer','form','layer','admin','upload','jquery'], function(){
+	        var form = layui.form,
+	      	admin = layui.admin,
+	      	layer = layui.layer;
+            var upload = layui.upload;
+            var $ = layui.jquery
+          //自定义验证规则
+          form.verify({
+            nikename: function(value){
+              if(value.length < 5){
+                return '昵称至少得5个字符啊';
+              }
+            }
+            ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+            ,repass: function(value){
+                if($('#L_pass').val()!=$('#L_repass').val()){
+                    return '两次密码不一致';
+                }
+            }
+          });
+
+          //监听提交
+          form.on('submit(add)', function(data){
+            var getData = transfer.getData('demo1'); 
+            let sendData = {
+                id:'<%-id%>',
+                rolename:data.field.rolename,
+                brief:data.field.brief,
+                authlist:getData
+            }
+           $.ajax({
+               url:"/admin/users/roleList/reviseRole",
+               method:"post",
+               contentType: "application/json; charset=utf-8",
+               data: JSON.stringify(sendData),
+           }).then(function(res){
+                layer.alert("修改成功", {icon: 6},function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                    //将ifame的上一层进行刷新页面
+                    window.parent.location.reload()
+                });
+           })
+            return false;
+          });
+        var transfer = layui.transfer;
+    //通过ajax获取数据后进行渲染
+
+        $.ajax({
+            url:"/admin/users/roleList/roleData",
+            method:"post",
+        }).then((res)=>{
+            let data = res.data;
+            let arr = [];
+            data.forEach(function(item,i){
+                arr[i] =  {
+                    "value": item.id, 
+                    "title": item.authname, 
+                    "disabled": "", 
+                    "checked": ""
+                }
+            })
+            //渲染
+            transfer.render({
+            elem: '#test'  //绑定元素
+            ,title:["所有权限",'拥有权限'],
+            data: arr
+            ,id: 'demo1' //定义索引
+            });
+        })
+        
+    })
+    </script>
+</html>

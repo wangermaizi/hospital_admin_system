@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>科室管理</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="stylesheet" href="/static/css/font.css" />
+    <link rel="stylesheet" href="/static/css/weadmin.css" />
+  </head>
+
+  <body>
+    <div class="weadmin-nav">
+      <a
+        class="layui-btn layui-btn-sm"
+        style="line-height:1.6em;margin-top:3px;float:right"
+        href="javascript:location.replace(location.href);"
+        title="刷新"
+      >
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a
+      >
+    </div>
+    <div class="weadmin-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 we-search">
+          <div class="layui-inline">
+            <input
+              type="text"
+              name="searchName"
+              placeholder="请输入用户名"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+          <button class="layui-btn" lay-submit="" lay-filter="sreach">
+            <i class="layui-icon">&#xe615;</i>
+          </button>
+        </form>
+      </div>
+      <div class="weadmin-block">
+        <button class="layui-btn layui-btn-danger" onclick="gwzDelAll()">
+          <i class="layui-icon"></i>批量删除
+        </button>
+        <button
+          class="layui-btn"
+          onclick="WeAdminShow('添加用户','/admin/doctors/officeList/addoffices')"
+        >
+          <i class="layui-icon"></i>添加
+        </button>
+        <span class="fr" style="line-height:40px">共有数据：<%-countNumber%> 条</span>
+      </div>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>
+              <div
+                class="layui-unselect header layui-form-checkbox"
+                lay-skin="primary"
+              >
+                <i class="layui-icon">&#xe605;</i>
+              </div>
+            </th>
+            <th>数据ID</th>
+            <th>科室名称</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for(let i = 0;i<result.length;i++){%>
+          <tr>
+            <td>
+              <div
+                class="layui-unselect layui-form-checkbox"
+                lay-skin="primary"
+                data-id="<%-result[i].id%>"
+              >
+                <i class="layui-icon">&#xe605;</i>
+              </div>
+            </td>
+            <td><%-result[i].id%></td>
+            <td><%-result[i].officename%></td>
+            <td class="td-manage">
+              <a
+                title="编辑"
+                onclick="WeAdminShow('编辑','/admin/doctors/officeList/modification?id=<%-result[i].id%>')"
+                href="javascript:;"
+              >
+                <i class="layui-icon">&#xe642;</i>
+              </a>
+              <a
+                title="删除"
+                onclick="member_del1(this,'<%-result[i].id%>')"
+                href="javascript:;"
+              >
+                <i class="layui-icon">&#xe640;</i>
+              </a>
+            </td>
+          </tr>
+          <%}%>
+        </tbody>
+      </table>
+      <div class="page">
+        <div>
+          <a class="prev" 
+          <% if ((page-1)>0){%>
+          href="/admin/doctors/officeList?page=<%-page-1%>"
+          <%}%>
+          >&lt;&lt;</a>
+
+          <% if ((page-1)!=0){%>
+            <a class="num" href="/admin/doctors/officeList?page=1">1</a>
+          <%}%> 
+
+          <% if ((page-1)>1){%>
+            <a class="num">...</a>
+            <a class="num" href="/admin/doctors/officeList?page=<%-page-1%>"><%-(page-1)%></a>
+          <%}%>
+
+          <span class="current"><%-page%></span>
+
+          <% if ((page+1)<=count){%>
+            <a class="num" href="/admin/doctors/officeList?page=<%-page+1%>"><%-(page+1)%></a>
+          <%}%>
+
+          <% if ((page+2)<count){%>
+            <a class="num" href="/admin/doctors/officeList?page=<%-page+2%>"><%-(page+2)%></a>
+            <a class="num">...</a>
+          <%}else if(count!=1){%>
+            <a class="num">...</a>
+          <%}%>
+
+          <a class="next" 
+          <% if ((page+1)<=count){%>
+          href="/admin/doctors/officeList?page=<%-page+1%>"
+          <%}%>
+          >&gt;&gt;</a>
+          <a class="num">总共<%-count%>页</a>
+        </div>
+      </div>
+    </div>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script
+      src="/static/js/eleDel.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script>
+      layui.use(['jquery'], function() {
+        let $ = layui.jquery;
+
+        //单个删除用户--------------------------------------------
+        window.member_del1 = function (obj, id) {
+            layer.confirm('确认要删除吗？', function(index) {
+                let data  = [];
+                data.push(id)
+                $.ajax({
+                   method:'post',
+                   url:'/admin/doctors/officeList/delUser',
+                   data:{data}
+                })
+                //发异步删除数据
+                $(obj).parents("tr").remove();
+                layer.msg('已删除!', {
+                    icon: 1,
+                    time: 1000
+                });
+            });
+        }
+
+        //批量删除用户--------------------------------------------
+        window.gwzDelAll = function(argument) {
+          var data = tableCheck.getData();
+          layer.confirm('确认要删除吗？' + data, function(index) {
+            //捉到所有被选中的，发异步进行删除
+            $.ajax({
+              method:'post',
+              url:'/admin/doctors/officeList/delUser',
+              data:{data}
+            })
+            layer.msg('删除成功', {
+              icon: 1
+            });
+            $('.layui-form-checked')
+              .not('.header')
+              .parents('tr')
+              .remove();
+            location.reload()
+          });
+        };
+      });
+    </script>
+  </body>
+</html>

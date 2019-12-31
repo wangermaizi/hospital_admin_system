@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+    <!--[if lt IE 9]>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="weadmin-body">
+        <form class="layui-form" method="post" action="/admin/news/addcatagory">
+            <div class="layui-form-item">
+                <label for="username" class="layui-form-label">
+                    <span class="we-red">*</span>分类名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="username" name="catagoryname" required="" lay-verify="catagory"
+                           autocomplete="off" value="<% if (cataInfo != null) {%> <%- cataInfo.catagory%> <% }%>" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="advice">
+                    <span class="we-red">*</span>将会用于在编写文章时对文章的分类
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button type="submit"  class="layui-btn">
+                    添加分类
+                </button>
+            </div>
+        </form>
+    </div>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        layui.extend({
+            admin: '{/}/static/js/admin'
+        });
+        layui.use(['form','layer','admin','upload','jquery'], function() {
+            var form = layui.form,
+                admin = layui.admin,
+                $ = layui.jquery,
+                layer = layui.layer;
+            //upload = layui.upload;
+            //自定义验证规则
+            form.verify({
+                catagory: function (value,item) {
+                    console.log(value);
+                    console.log(item);
+                    if (value.length < 5) {
+                        return '昵称至少得5个字符啊';
+                    }
+                    else if (value == 'www') {
+                        return '不能这样子写'
+                    }
+                }
+                , pass: [/(.+){6,12}$/, '密码必须6到12位']
+                , repass: function (value) {
+                    if ($('#L_pass').val() != $('#L_repass').val()) {
+                        return '两次密码不一致';
+                    }
+                }
+            });
+            $('#username').blur(function () {
+                let catagory =  $(this).val().length;
+                if (catagory == 0){
+                    console.log('内容不能为空');
+                }
+            })
+        });
+    </script>
+</body>
+</html>

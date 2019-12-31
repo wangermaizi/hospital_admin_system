@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+</head>
+<body>
+    <div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">新闻管理</a>
+        <a>
+          <cite>新闻文章管理</cite></a>
+      </span>
+        <a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="weadmin-body">
+        <div class="layui-row">
+            <form class="layui-form layui-col-md12 we-search" method="post" action="/admin/news/searchNews">
+                <div class="layui-inline">
+                <select id="catagory" name="cid" lay-filter="catagory">
+                    <% cataInfo.forEach((item,index)=>{%>
+                    <option value="<%- item.id%>"><%- item.catagory%></option>
+                    <%})%>
+                </select>
+                </div>
+                <div class="layui-inline">
+                    <input type="text" name="newsname" placeholder="请输入文章名或者作者名" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" type="submit"><i class="layui-icon">&#xe615;</i></button>
+            </form>
+        </div>
+        <div class="weadmin-block">
+            <button class="layui-btn layui-btn-danger" onclick="xxDelAll()"><i class="layui-icon"></i>批量删除</button>
+            <button class="layui-btn" onclick="WeAdminShow('添加文章','/admin/news/addarticle')"><i class="layui-icon"></i>添加</button>
+            <button class="layui-btn" onclick="location.href='/admin/news/manage' "><i class="layui-icon"></i>清除查询</button>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="skipto" name="price_min" placeholder="跳转至" autocomplete="off" class="layui-input">
+            </div>
+            <label for="skipto">
+                <button class="layui-btn" type="submit"><i class="layui-icon">&#xe615;</i></button>
+            </label>
+            <span class="fr" style="line-height:40px">共有数据：<%- allnum%> 条</span>
+            <span class="fr" style="line-height:40px">&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</span>
+            <span class="fr" style="line-height:40px">共有页数：<%- allPage%> 页</span>
+        </div>
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th>
+                    <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                </th>
+                <th>ID</th>
+                <th>新闻标题</th>
+                <th>作者</th>
+                <th>角色</th>
+                <th>发布时间</th>
+                <th>查看次数</th>
+                <th>文章分类</th>
+                <th>可发布</th>
+                <th>允许人</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+
+            <% newsInfo.forEach(function (item, index) { %>
+                <tr>
+                    <td>
+                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='<%= item.newsID%>'><i class="layui-icon">&#xe605;</i></div>
+                    </td>
+                    <td><%= item.newsID%></td>
+                    <td><%= item.title%></td>
+                    <td><%= item.author%></td>
+                    <td><%= item.rolename%></td>
+                    <td><%- parseTime(item.pubtime)%></td>
+                    <td><%= item.viewtime%></td>
+                    <td><%= item.catagory%></td>
+                    <td>
+                        <%= item.isPub%>
+                        <input type="checkbox" data-id="<%= item.newsID%>" name="isPub" lay-skin="switch" lay-text="ON|OFF" <%if (item.isPub == "true") { %> checked <% }%>>
+                    </td>
+                    <td><%= item.allowmen%></td>
+                    <td class="td-manage">
+                        <a title="编辑" onclick="WeAdminShow('编辑','/admin/news/addarticle?newsID=<%= item.newsID%>')" href="javascript:;">
+                            <i class="layui-icon">&#xe642;</i>
+                        </a>
+                        <a title="删除" onclick="xxMember_del(this,'<%= item.newsID%>')" href="javascript:void (0);">
+                            <i class="layui-icon">&#xe640;</i>
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+        <div class="page">
+            <div>
+                <%if (page > 1) {%>
+                    <a class="prev" href="/admin/news/manage?page=<%- page-1%>&search=<%- searchItem%>&cid=<%- cid%>"> << </a>
+                <% } %>
+                <% for (let i = page-2; i < page+3; i++) {%>
+                    <% if (i == page) {%>
+                        <span class="current"><%- page%></span>
+                    <% } else { %>
+                        <% if (i > 0 && i <= allPage) {%>
+                            <a class="num" href="/admin/news/manage?page=<%- i%>&search=<%- searchItem%>&cid=<%- cid%>"><%- i %></a>
+                        <% } %>
+                    <% } %>
+                <% }%>
+                <a class="next" href="<% if (page < allPage) {%> /admin/news/manage?page=<%- parseInt(page)+1%>&search=<%- searchItem%>&cid=<%- cid%><% } %>"> >> </a>
+            </div>
+        </div>
+    </div>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/eleDel.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        /*开始删除字段*/
+        layui.use(['form','jquery','admin'],function () {
+            var $ = layui.jquery;
+            var form = layui.form;
+            window.xxDelAll = function (argument) {
+                var data = tableCheck.getData();
+                layer.confirm('确认要删除吗？' + data, function(index) {
+                    //捉到所有被选中的，发异步进行删除
+                    console.log(data);
+                    $.ajax({
+                        method:'POST',
+                        url:'/admin/news/delnews',
+                        data:{data}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                });
+            }
+            /*用户-删除*/
+            window.xxMember_del = function (obj, id) {
+                layer.confirm('确认要删除吗？', function(index) {
+                    console.log(id);
+                    $.ajax({
+                        method: "POST",
+                        url:"/admin/news/singleDel",
+                        data:{id}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                    //发异步删除数据
+                    $(obj).parents("tr").remove();
+                });
+            }
+            $('input[type=checkbox]').change(function (e) {
+                console.log(e);
+                console.log(e.target.dataset.id);
+                console.log($(this).prop('checked'))
+                let newsID = e.target.dataset.id;
+                let isPub = $(this).prop('checked');
+                $.ajax({
+                    url:'/admin/news/ispub',
+                    method:'POST',
+                    data:{newsID,isPub}
+                }).then((res)=>{
+                    console.log(res);
+                    location.reload()
+                })
+            })
+            $('#skipto').blur(function () {
+                let page = $(this).val()
+                location.href = "/admin/news/manage?page="+page
+            }).end().parent().next().find('button').click(function () {
+                let page = $("#skipto").val()
+                console.log("/admin/news/manage?page=" + page + "&search=" + "<%- searchItem %>");
+                location.href = "/admin/news/manage?page="+page+"&search="+"<%- searchItem%>"
+                /*跳转页面暂时没有做出来*/
+            });
+
+            // 分页查询
+            form.on("select(catagory)",function (data) {
+                console.log(data.value);// 获取到被选中的value值
+                let cid = data.value;
+                location.href = '/admin/news/manage?cid='+data.value
+            })
+        })
+
+    </script>
+</body>
+</html>

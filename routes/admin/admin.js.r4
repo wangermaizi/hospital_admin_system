@@ -1,0 +1,50 @@
+//模块导入--------------------------------------------
+const express = require('express');
+const router = express.Router();
+
+//中间件模块导入--------------------------------------------
+const usersRouter = require('./users');
+const newsRouter = require('./news');
+const doctorsRouter = require('./doctors');
+const patientsRouter = require('./patients');
+const queryFn = require('../../public/js/common/mysql');
+
+//判断是否允许登入后台页面中间件--------------------------------------------
+function permission(req, res, next) {
+  if (req.session.username == undefined) {
+    //尚未登入，返回登录页
+    res.render('info/info.ejs', {
+      title: '尚未登录',
+      content: '请您先登录账号',
+      hrefText: '登录页',
+      href: '/rl/login'
+    });
+  } else {
+    //正常进入
+    next();
+  }
+}
+
+//后台首页--------------------------------------------
+router.get('/', permission, async function(req, res) {
+  let username = req.session.username;
+  let sqlStr = 'select imgheader from user where username = ?';
+  let arr = [username];
+  let imgheader = await queryFn(sqlStr, arr);
+  imgheader = imgheader[0].imgheader;
+  res.render('admin/index.ejs', { username, imgheader });
+});
+
+//后台用户管理--------------------------------------------
+router.use('/users', usersRouter);
+
+//后台新闻管理--------------------------------------------
+router.use('/news', newsRouter);
+
+//后台医生管理--------------------------------------------
+router.use('/doctors', doctorsRouter);
+
+//后台患者管理--------------------------------------------
+router.use('/patients', patientsRouter);
+
+module.exports = router;

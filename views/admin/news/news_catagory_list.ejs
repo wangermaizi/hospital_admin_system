@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>管理员列表-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/weadmin.css">
+</head>
+
+<body>
+    <div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">新闻管理</a>
+        <a>
+          <cite>新闻分类管理</cite></a>
+      </span>
+        <a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="weadmin-body">
+        <div class="layui-row">
+            <form class="layui-form layui-col-md12 we-search" method="post" action="/admin/news/catagory">
+                <div class="layui-inline">
+                    <input type="text" name="cataname" placeholder="请输入分类名" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" type="submit"><i class="layui-icon">&#xe615;</i></button>
+            </form>
+        </div>
+        <div class="weadmin-block">
+            <button class="layui-btn layui-btn-danger" onclick="xxDelAll()"><i class="layui-icon"></i>批量删除</button>
+            <button class="layui-btn" onclick="WeAdminShow('添加分类','/admin/news/addcatagory')"><i class="layui-icon"></i>添加</button>
+            <button class="layui-btn" onclick="location.href='/admin/news/catagory'"><i class="layui-icon"></i>清除查询</button>
+            <span class="fr" style="line-height:40px">共有数据：<%= allNum%> 条</span>
+        </div>
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th>
+                    <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                </th>
+                <th>ID</th>
+                <th>分类名称</th>
+                <th>分类确认时间</th>
+                <th>修改人</th>
+                <th>角色</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+
+            <% newsInfo.forEach(function (item, index) { %>
+                <tr>
+                    <td>
+                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='<%= item.id%>'><i class="layui-icon">&#xe605;</i></div>
+                    </td>
+                    <td><%= item.id%></td>
+                    <td><%= item.catagory%></td>
+                    <td><%- parseTime(item.confirmTime) %></td>
+                    <td><%= item.author%></td>
+                    <td><%= item.rolename%></td>
+                    <td class="td-manage">
+                        <a title="编辑" onclick="WeAdminShow('编辑','/admin/news/singleEdit?catagoryID=<%= item.id%>')" href="javascript:;">
+                            <i class="layui-icon">&#xe642;</i>
+                        </a>
+                        <a title="删除" onclick="xxMember_del(this,'<%= item.id%>')" href="javascript:;">
+                            <i class="layui-icon">&#xe640;</i>
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+        <div class="page">
+            <div>
+                <%if (page > 1) {%>
+                    <a class="prev" href="/admin/user/userlist?page=<%- page-1%>"> << </a>
+                <% } %>
+                <% for (let i = page-2; i < page+2; i++) {%>
+                    <% if (i == page) {%>
+                        <span class="current"><%- page%></span>
+                    <% } else { %>
+                        <% if (i > 0 && i <= allPage) {%>
+                            <a class="num" href="/admin/user/userlist?page=<%- i%>"><%- i %></a>
+                        <% } %>
+                    <% } %>
+                <% }%>
+                <a class="next" href="<% if (page < allPage) {%> /admin/user/userlist?page=<%- parseInt(page)+1%><% } %>"> >> </a>
+            </div>
+        </div>
+    </div>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/eleDel.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        /*开始删除字段*/
+        layui.use(['jquery','admin'],function () {
+            var $ = layui.jquery;
+            window.xxDelAll = function (argument) {
+                var data = tableCheck.getData();
+                layer.confirm('确认要删除吗？' + data, function(index) {
+                    //捉到所有被选中的，发异步进行删除
+                    console.log(data);
+                    $.ajax({
+                        method:'POST',
+                        url:'/admin/news/catagory/delcatagory',
+                        data:{data}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                });
+            }
+            /*用户-删除*/
+            window.xxMember_del = function (obj, id) {
+                layer.confirm('确认要删除吗？', function(index) {
+                    console.log(id);
+                    $.ajax({
+                        method: "POST",
+                        url:"/admin/news/catagory/delcatagory",
+                        data:{id}
+                    }).then((res)=>{
+                        location.reload()
+                    })
+                    //发异步删除数据
+                    $(obj).parents("tr").remove();
+                });
+            }
+
+            /*用户-编辑*/
+        })
+
+    </script>
+</body>
+
+</html>

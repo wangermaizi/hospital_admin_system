@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>患者信息</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="stylesheet" href="/static/css/font.css" />
+    <link rel="stylesheet" href="/static/css/weadmin.css" />
+    <style>
+      #prescribelist{
+        width: 200px;
+        height: auto;
+        border: 1px solid #999;
+      }
+      #prescribeAll{
+        width: auto;
+        height: auto;
+        display: flex;
+        flex-flow:row wrap;
+      }
+      .All{
+        width: auto;
+        height: auto;
+        margin: 10px;
+        padding: 5px;
+        background-color: #efefef;
+        position: relative;
+        text-align: center;
+      }
+      .fork{
+        width: 10px;
+        height:5px; 
+        background: #333;
+        transform: rotate(45deg);
+        position: absolute;
+        right: -5px;
+        top: 0;
+      }
+      .fork:after{
+        content:'';
+        display:block;
+        width: 10px;
+        height:5px; 
+        background: #333;
+        transform: rotate(-90deg);
+      }
+      .box{
+				width: 60px;
+				height: 24px;
+				margin: 0 auto;
+				border: 1px solid #666;
+			}
+			.left,.center,.right{
+				float: left;
+				width: 15px;
+				height: 24px;
+				line-height: 25px;
+				text-align: center;
+				background: #eee;
+				font-weight: bold;
+				font-size: 18px;
+				cursor: pointer;
+			}
+			.center{
+				width: 20px;
+        height: 20px;
+        margin-left: 3px;
+				background: #fff;
+				cursor: auto;
+			}
+			.right{
+				float: right;
+				cursor: pointer;
+			}
+    </style>
+  </head>
+
+  <body>
+    
+    <div class="weadmin-body">
+      <form class="layui-form" action="/admin/users/selfInfo" method="POST">
+        
+        <div class="layui-form-item">
+          <label for="username" class="layui-form-label">
+              <span class="we-red">*</span>头像
+          </label>
+          <div class="layui-input-inline">
+              <img id="img" style="width: 100px;height: 100px;" src="<%-result[0].imgheader%>" alt="">
+          </div>
+      </div>
+        <div class="layui-form-item">
+          <label for="username" class="layui-form-label">
+            <span class="we-red">*</span>患者
+          </label>
+          <div class="layui-input-inline">
+            <input
+              disabled
+              type="text"
+              id="username"
+              name="username"
+              value="<%-result[0].patientname%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>性别
+          </label>
+          <div class="layui-input-inline">
+            <input
+              disabled
+              type="text"
+              id="gender"
+              name="gender"
+              value="<%-result[0].gender%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>手机
+          </label>
+          <div class="layui-input-inline">
+            <input
+              disabled
+              type="text"
+              id="phone"
+              name="phone_number"
+              required=""
+              lay-verify="phone"
+              value="<%-result[0].phone_number%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_email" class="layui-form-label">
+            <span class="we-red">*</span>邮箱
+          </label>
+          <div class="layui-input-inline">
+            <input
+              disabled
+              type="text"
+              id="L_email"
+              name="email"
+              required=""
+              value="<%-result[0].email%>"
+              lay-verify="email"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>挂号时间
+          </label>
+          <div class="layui-input-inline">
+            <input
+              type="text"
+              id="regtime"
+              name="regtime"
+              value="<%-result[0].regtime%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>看病时间
+          </label>
+          <div class="layui-input-inline">
+            <input
+              type="text"
+              id="seetime"
+              name="seetime"
+              value="<%-result[0].seetime%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>主治医生
+          </label>
+          <div class="layui-input-inline">
+            <input
+              disabled
+              type="text"
+              id="doctorname"
+              name="doctorname"
+              value="<%-result[0].doctorname%>"
+              autocomplete="off"
+              class="layui-input"
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="we-red">*</span>挂号状态</label>
+            <div class="layui-input-block">
+              <%
+                for(let i=0;i<state.length;i++){
+              %>
+              <input type="radio" name="stateid" value="<%-state[i].id%>" lay-skin="primary" title="<%-state[i].state%>" <%if(state[i].id==result[0].stateid){%> checked="true"<%}%>>
+              <%}%>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_pass" class="layui-form-label">
+                <span class="we-red">*</span>看病详情
+            </label>
+            <div class="layui-input-block" id="fwb">
+                
+            </div>
+            <textarea hidden name="content" id="content" cols="30" rows="10">
+                 
+            </textarea>
+            
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>开药
+          </label>
+          <div class="layui-input-inline">
+            <input id="prescribe" list="options" type="text" name="prescribe" placeholder="请输入药名" class="layui-input">
+            <div id="prescribelist" name="prescribelist"></div>
+            <div name="prescribeAll" id="prescribeAll"></div>
+          </div>
+          <div class="layui-form-mid layui-word-aux">
+            <span class="we-red">*</span>已开药（<%-result[0].prescribe%>）
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_repass" class="layui-form-label"></label>
+          <div class="layui-form-mid layui-word-aux">
+            <button type="button" class="layui-btn" lay-filter="add" lay-submit="">修改</button>
+              <span class="we-red">*</span>信息只能设置一次，谨慎设置
+          </div>
+        </div>
+      </form>
+    </div>
+
+    
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/js/common/wangEditor.min.js"></script>
+    <script type="text/javascript">
+      layui.extend({
+        admin: '{/}/static/js/admin'
+      });
+
+      layui.use(['form', 'layer', 'admin','upload','jquery'], function() {
+        var form = layui.form,
+          admin = layui.admin,
+          layer = layui.layer;
+          upload =layui.upload;
+          $ =layui.jquery;
+        form.render();
+        //自定义验证规则
+        form.verify({
+          nikename: function(value) {
+            if (value.length < 5) {
+              return '昵称至少得5个字符啊';
+            }
+          },
+          pass: [/(.+){6,12}$/, '密码必须6到12位'],
+          repass: function(value) {
+            if ($('#L_pass').val() != $('#L_repass').val()) {
+              return '两次密码不一致';
+            }
+          }
+        });
+
+        //监听提交
+        form.on('submit(add)', function(data) {
+          if(`<%-result[0].alterstate%>`){
+            layer.alert('已不可修改', { icon: 6 }, function() {
+              // 获得frame索引
+              var index = parent.layer.getFrameIndex(window.name);
+              //关闭当前frame
+              parent.layer.close(index);
+              parent.location.reload()
+            });
+            return false;
+          }else{
+            let arr = [];
+            $('.All').each(function(index,item){
+              let drug = $('.drug').eq(index).text()
+              let num = $('.center').eq(index).val()
+              let options = {
+                drug,
+                num
+              }
+              arr.push(options)
+            })
+            $.ajax({
+              method:'post',
+              url:'/admin/patients/patientInfo/patientInfo',
+              data:{data:data.field,arr:JSON.stringify(arr)}
+            })
+
+            layer.alert('修改成功', { icon: 6 }, function() {
+              // 获得frame索引
+              var index = parent.layer.getFrameIndex(window.name);
+              //关闭当前frame
+              parent.layer.close(index);
+              parent.location.reload()
+            });
+            return false;
+          }
+          
+        });
+
+
+          //富文本编辑器实例化
+          var E = window.wangEditor
+          var editor2 = new E('#fwb')
+          editor2.customConfig.onchange = function (html) {
+              // 监控变化，同步更新到 textarea
+              $("#content").val(html)
+          }
+          editor2.create()
+
+          //一开始将textarea从数据库获取的内容渲染到富文本编辑器editor
+          $("#content").val(editor2.txt.html(`<%- result[0].brief %>`))
+
+
+          $("#prescribe").bind('input propertychange',function(){xiala()});
+          $("#prescribe").focus(function(){xiala()})
+          function xiala(){
+            let search = $("#prescribe").val()
+            $.ajax({
+              method:'post',
+              url:'/admin/patients/patientInfo/change',
+              data:{search}
+            }).then(function(res){
+                let arr = Array.from(res.drugInfo)
+              if(arr.length!=0){
+                if(arr.length==1){
+                  $('#prescribelist').empty()
+                  let div = document.createElement('div');
+                  div.className = 'list';
+                  div.innerHTML = arr[0].drugname;
+                  $('#prescribelist').append(div)
+                }else{
+                  if(arr.length>10){
+                    arr.splice(11)
+                  }
+                  $('#prescribelist').empty()
+                  arr.forEach(function(item,i){
+                    let div = document.createElement('div');
+                    div.className = 'list';
+                    div.innerHTML = arr[i].drugname;
+                    $('#prescribelist').append(div)
+                  })
+                }
+              }
+            })
+          }
+            
+          let num = 0;
+          $('#prescribe').on('keyup',function(event){
+            if(event.keyCode == 13 && $('#prescribe').val() != "" && $('.list:nth-child(1)').html() != undefined){
+              let All = document.createElement('div');
+              All.className = "All "+num
+              All.innerHTML = `
+                <div class="drug ${num}">${$('.list:nth-child(1)').html()}</div>
+              `;
+              $('#prescribeAll').append(All)
+              $('.All').attr("name","prescr")
+
+              let box = document.createElement('div');
+              box.className = "box";
+              box.innerHTML = `
+                <div class="left abc${num}"><</div>
+                <input value="1" class="center ${num}"/>
+                <div class="right abc${num}">></div>
+              `;
+              $('.All.'+num).append(box);
+              $('.left.abc'+num).click(function(res){
+                let center = parseInt($(this).next().val())
+                if (center > 1) {
+                  center--;
+                  $(this).next().val(center)
+                } else{
+                  layer.alert('已经是最小数量了')
+                }
+              })
+              let drugname = $('.drug.'+num).html()
+              
+              
+                let drugnum
+                $.ajax({
+                  method:"post",
+                  url:"/admin/patients/patientInfo/drugnum",
+                  data:{drugname}
+                }).then((res)=>{
+                  drugnum = res.content[0].items;
+                })
+
+                
+                $('.right.abc'+num).click(function(res){
+                  let center =parseInt($(this).prev().val())
+                  if (center < drugnum) {
+                    center++
+                    $(this).prev().val(center)
+                  } else{
+                    layer.alert('已经是最大数量了')
+                  }
+                })
+              
+
+              
+              
+              $('.center.'+num).bind('input propertychange', function(){
+                let merchantNum = $(this).val()
+                if (merchantNum == null || merchantNum == "") {
+                  $(this).val(1)
+                  layer.alert("数量不能为空");
+                  return false;
+                }
+                else if (!(/(^[1-9]\d*$)/.test(merchantNum))) {
+                  $(this).val(1)
+                  layer.alert("请输入正整数");
+                  return false;
+                }
+              })
+
+              let fork = document.createElement('div')
+              fork.className = "fork"
+              $('.All.'+num).append(fork);
+              $('#prescribe').val("")
+              $('#prescribelist').empty()
+              num++
+              $('.fork').click(function(){
+                $(this).parent().remove()
+              })
+              return false
+            }
+          })
+
+          $('#prescribe').blur(()=>{
+            $('#prescribelist').empty()
+          })
+
+      });
+
+      
+      
+    </script>
+  </body>
+</html>
